@@ -5,7 +5,6 @@ require 'forwardable'
 require 'ostruct'
 require 'yaml'
 
-require 'core_ext/kernel/requires'
 require 'core_ext/class/inheritable_attributes'
 
 require 'active_processor/configuration'
@@ -26,8 +25,8 @@ require 'active_processor/payment_engines/osmp'
 
 # custom activemerchant gateways
 require 'active_merchant'
-require 'active_merchant/billing/integrations/action_view_helper'
 require 'active_merchant/billing/gateways/hsbc_secure_epayments'
 require 'active_merchant/billing/integrations/moneybooker'
 
-ActionView::Base.send(:include, ActiveMerchant::Billing::Integrations::ActionViewHelper)
+require 'active_processor/action_view_helper'
+ActionView::Base.send(:include, ActiveProcessor::ActionViewHelper)
