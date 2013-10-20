@@ -5,11 +5,7 @@ require 'forwardable'
 require 'ostruct'
 require 'yaml'
 
-require 'pp'
-
-require 'rubygems'
-gem 'actionpack' #, "<= 1.13.6"
-gem 'activesupport' #, '<= 1.4.4'
+require 'core_ext/class/inheritable_attributes'
 
 require 'active_processor/configuration'
 require 'active_processor/core_ext'
