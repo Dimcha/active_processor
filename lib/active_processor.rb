@@ -27,3 +27,4 @@ require 'active_processor/payment_engines/google_checkout'
 
 # custom activemerchant gateways
 require 'active_merchant/billing/gateways/hsbc_secure_epayments'
+require 'active_merchant/billing/integrations/moneybooker'
