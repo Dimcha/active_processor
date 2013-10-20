@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+require 'active_merchant_ideal'
+
 module ActiveProcessor
   module PaymentEngines
     class Ideal < PaymentEngine

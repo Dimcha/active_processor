@@ -1,10 +1,10 @@
 PATH
   remote: .
   specs:
-    active_processor (1.0.4)
-      activemerchant (= 1.5.0)
+    active_processor (1.0.13)
+      active_merchant_ideal (= 0.1.4)
+      activemerchant (= 1.5.1)
       google4r-checkout (= 1.0.6)
-      ideal (= 0.2.0)
       railties (>= 3.0.0)
 
 GEM
@@ -16,7 +16,9 @@ GEM
       erubis (~> 2.7.0)
       rack (~> 1.5.2)
       rack-test (~> 0.6.2)
-    activemerchant (1.5.0)
+    active_merchant_ideal (0.1.4)
+      activemerchant (>= 1.5.1)
+    activemerchant (1.5.1)
       activesupport (>= 2.3.2)
       builder (>= 2.0.0)
     activesupport (4.0.0)
@@ -31,9 +33,6 @@ GEM
     google4r-checkout (1.0.6)
       money (>= 1.7.1)
     i18n (0.6.5)
-    ideal (0.2.0)
-      builder
-      nap
     metaclass (0.0.1)
     minitest (4.7.5)
     mocha (0.13.3)
@@ -41,7 +40,6 @@ GEM
     money (5.1.1)
       i18n (~> 0.6.0)
     multi_json (1.8.2)
-    nap (0.5.1)
     rack (1.5.2)
     rack-test (0.6.2)
       rack (>= 1.0)
