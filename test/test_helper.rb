@@ -8,6 +8,8 @@ require 'pp'
 require 'shoulda'
 require 'mocha'
 require 'active_processor'
+require 'action_pack'
+require 'action_view'
 
 begin
   require 'leftright';

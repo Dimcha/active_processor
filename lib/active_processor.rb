@@ -13,7 +13,7 @@ gem 'activesupport' #, '<= 1.4.4'
 
 require 'active_processor/configuration'
 require 'active_processor/core_ext'
-require 'active_processor/engine'
+require 'active_processor/engine' if defined?(Rails)
 require 'active_processor/routes'
 
 require 'active_processor/form_helper'
@@ -26,4 +26,4 @@ require 'active_processor/payment_engines/integration'
 require 'active_processor/payment_engines/google_checkout'
 
 # custom activemerchant gateways
-require 'active_merchant/billing/gateways/hsbc_secure_payments'
+require_relative 'active_merchant/billing/gateways/hsbc_secure_payments'
