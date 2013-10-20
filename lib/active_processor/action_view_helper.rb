@@ -57,9 +57,10 @@ module ActiveProcessor #:nodoc:
         result << hidden_field_tag(field, value)
       end
 
-      service.raw_html_fields.each do |field, value|
-        result << "<input id=\"#{field}\" name=\"#{field}\" type=\"hidden\" value=\"#{value}\" />\n"
-      end
+      # We do not have raw html fields
+      # service.raw_html_fields.each do |field, value|
+      #   result << "<input id=\"#{field}\" name=\"#{field}\" type=\"hidden\" value=\"#{value}\" />\n"
+      # end
 
       result << '</form>'
       result= result.join("\n")
