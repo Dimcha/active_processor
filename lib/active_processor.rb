@@ -27,6 +27,7 @@ end
 
 require 'active_processor/configuration'
 require 'active_processor/core_ext'
+require 'active_processor/engine'
 require 'active_processor/routes'
 
 require 'active_processor/form_helper'
