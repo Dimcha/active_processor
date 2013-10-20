@@ -25,13 +25,6 @@ rescue LoadError
   require 'active_merchant'
 end
 
-# custom libs
-$:.unshift File.expand_path('../../vendor/google4r-checkout/lib', __FILE__)
-$:.unshift File.expand_path('../../vendor/ideal/lib', __FILE__)
-
-require 'google4r'
-require 'active_merchant_ideal'
-
 require 'active_processor/configuration'
 require 'active_processor/core_ext'
 require 'active_processor/routes'
