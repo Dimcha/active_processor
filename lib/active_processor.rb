@@ -24,5 +24,9 @@ require 'active_processor/payment_engines/ideal'
 require 'active_processor/payment_engines/osmp'
 
 # custom activemerchant gateways
+require 'active_merchant'
+require 'active_merchant/billing/integrations/action_view_helper'
 require 'active_merchant/billing/gateways/hsbc_secure_epayments'
 require 'active_merchant/billing/integrations/moneybooker'
+
+ActionView::Base.send(:include, ActiveMerchant::Billing::Integrations::ActionViewHelper)
