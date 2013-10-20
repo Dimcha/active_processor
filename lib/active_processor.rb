@@ -29,4 +29,8 @@ require 'active_merchant/billing/integrations/action_view_helper'
 require 'active_merchant/billing/gateways/hsbc_secure_epayments'
 require 'active_merchant/billing/integrations/moneybooker'
 
+def require_library_or_gem(*args)
+  require *args
+end
+
 ActionView::Base.send(:include, ActiveMerchant::Billing::Integrations::ActionViewHelper)
