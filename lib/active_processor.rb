@@ -11,20 +11,6 @@ require 'rubygems'
 gem 'actionpack' #, "<= 1.13.6"
 gem 'activesupport' #, '<= 1.4.4'
 
-#require 'action_controller'
-#require 'action_view'
-#require 'active_support'
-#require 'action_pack'
-
-begin
-  require 'active_merchant'
-rescue LoadError
-  # in case we fail to load active_merchant as gem, load it as plugin
-  # assuming that is is in vendor/plugins directory
-  $:.unshift File.expand_path('../../../active_merchant/lib/', __FILE__)
-  require 'active_merchant'
-end
-
 require 'active_processor/configuration'
 require 'active_processor/core_ext'
 require 'active_processor/engine'
@@ -38,3 +24,6 @@ require 'active_processor/payment_engine'
 require 'active_processor/payment_engines/gateway'
 require 'active_processor/payment_engines/integration'
 require 'active_processor/payment_engines/google_checkout'
+
+# custom activemerchant gateways
+require 'active_merchant/billing/gateways/hsbc_secure_payments'

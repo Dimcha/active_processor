@@ -43,7 +43,7 @@ module ActiveProcessor
 
     def initialize
       # standard configuration
-      @config_file = File.dirname(__FILE__)+"/../../gateway_config.yml"
+      @config_file = File.join(Rails.root, 'config', 'gateway_config.yml')
       @legacy_rails = (Rails.respond_to?(:env)) ? false : true
       @data = YAML::load(File.open(@config_file))[((@legacy_rails) ? RAILS_ENV : Rails.env)]
       @translate_func = lambda { |phrase| t(phrase) }
