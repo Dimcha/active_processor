@@ -26,4 +26,4 @@ require 'active_processor/payment_engines/integration'
 require 'active_processor/payment_engines/google_checkout'
 
 # custom activemerchant gateways
-require_relative 'active_merchant/billing/gateways/hsbc_secure_payments'
+require 'active_merchant/billing/gateways/hsbc_secure_epayments'
