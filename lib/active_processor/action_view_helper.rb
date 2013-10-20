@@ -1,7 +1,7 @@
 # Port of https://raw.github.com/Shopify/active_merchant/master/lib/active_merchant/billing/integrations/action_view_helper.rb
 require 'action_pack'
 
-module AcitveProcessor #:nodoc:
+module ActiveProcessor #:nodoc:
   module ActionViewHelper
     # This helper allows the usage of different payment integrations
     # through a single form helper.  Payment integrations are the
