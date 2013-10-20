@@ -86,7 +86,7 @@ module ActiveProcessor
 
     def notice_flash_errors(object)
       object.errors.each { |key, value|
-        flash.now[:notice] += "<br> * #{_(key)} - #{value.class == Array ? _(value.first) : _(value)}"
+        flash.now[:notice] += "<br> * #{_(key.underscore)} - #{value.class == Array ? _(value.first.underscore) : _(value.underscore)}"
       } if object.respond_to?(:errors)
     end
 
