@@ -58,6 +58,9 @@ module ActiveProcessor
       @logger = ActiveRecord::Base.logger
     end
 
+    def host
+      @host.is_a?(Proc) ? @host.call : @host
+    end
   end
 
   class << self
