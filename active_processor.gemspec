@@ -18,5 +18,6 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ['README']
   s.require_paths = ['lib']
 
-  # s.add_development_dependency 'simple_uuid'
+  s.add_dependency 'google4r-checkout', '1.0.6'
+  s.add_dependency 'ideal', '0.2.0'
 end
