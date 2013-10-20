@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ['README']
   s.require_paths = ['lib']
 
+  s.add_dependency 'activemerchant', '1.5.0'
   s.add_dependency 'google4r-checkout', '1.0.6'
   s.add_dependency 'ideal', '0.2.0'
 end
