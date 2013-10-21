@@ -1,3 +1,3 @@
 module ActiveProcessor
-  VERSION = "1.0.22"
+  VERSION = "1.0.21"
 end
