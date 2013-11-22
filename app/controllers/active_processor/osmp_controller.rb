@@ -11,6 +11,8 @@ class ActiveProcessor::OsmpController < ActiveProcessor::BaseController
   end
 
   def notify
+    return false if limited
+
     ActiveProcessor.debug("OSMP#notify")
     transaction = {:command => params[:command].to_s, :amount => params[:sum].to_f, :id => params[:txn_id].to_i}
     transaction[:user] = User.find(:first, :conditions => ["username = ?", params[:account]])
@@ -108,5 +110,18 @@ class ActiveProcessor::OsmpController < ActiveProcessor::BaseController
       xml.result(5)
       xml.comment("The subscribers ID is not found (Wrong number)")
     }
+  end
+
+  def limited 
+    last_payment = Payment.where("paymenttype NOT IN ('manual', 'credit note', 'invoice', 'voucher', 'subscription', 'Card')").last 
+    if (not payment_gateway_active?) and last_payment and (last_payment.date_added > (Time.now - 1.day)) 
+      xml = Builder::XmlMarkup.new 
+      xml.instruct!(:xml, :version => "1.0") 
+      render :xml => xml.response { 
+          xml.error = _('payment_gateway_restriction_for_second_time') 
+      } 
+      return true 
+    end 
+    return false 
   end
 end

@@ -2,7 +2,7 @@
 class PaymentGatewaysController < ApplicationController
   layout "callc"
   before_filter :check_localization
-  before_filter :check_if_enabled
+  before_filter :check_if_enabled, :if => lambda{ not admin? }
 
 
   # gateway configuration listing 

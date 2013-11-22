@@ -108,10 +108,6 @@ module ActiveProcessor
       redirect_to :controller => "/callc", :action => "main" if !session[:usertype_id] or session[:usertype] == "guest" or session[:usertype].to_s == ""
     end
 
-    def check_if_enabled
-      redirect_to :controller => "/callc", :action => "main" unless payment_gateway_active?
-    end
-
     def verify_params
       unless params['gateways']
         dont_be_so_smart
@@ -125,6 +121,19 @@ module ActiveProcessor
         redirect_to :controller => "callc", :action => "main" and return false
       end
     end
+
+    def check_if_enabled
+      if admin?
+        last_payment = Payment.where("paymenttype NOT IN ('manual', 'credit note', 'invoice', 'voucher', 'subscription', 'Card')").last 
+        if (last_payment and (last_payment.date_added > (Time.now - 1.day))) 
+          flash[:notice] = _('payment_gateway_restriction_for_second_time')
+          redirect_to :root and return false 
+        end 
+      else 
+        flash[:notice] = _('Dont_be_so_smart') 
+        redirect_to :controller => "/callc", :action => "main" 
+      end
+    end 
 
   end
 end
