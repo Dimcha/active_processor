@@ -84,7 +84,7 @@ module ActiveProcessor
           key_string = "gateway_time" if key_string == "gateway_year"
         end
 
-        flash.now[:notice] += "<br> [*] #{_(key_string)} - #{value.class == Array ? _(value.first) : _(value)}"
+        flash.now[:notice] += "<br> * #{_(key_string)} - #{value.class == Array ? _(value.first) : _(value)}"
       } if object.respond_to?(:errors)
     end
 
