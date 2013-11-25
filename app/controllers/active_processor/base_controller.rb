@@ -4,7 +4,7 @@ module ActiveProcessor
     layout "callc" #layout ActiveProcessor.configuration.layout
     before_filter :check_post_method_pg, :only => [:pay]
     before_filter :check_localization
-    before_filter :check_if_enabled, :only => [:index, :pay]
+    before_filter :check_if_enabled, :only => [:index, :pay], :if => lambda{ not payment_gateway_active? }
 
     def index
       @gateway = ::GatewayEngine.find(:first, {:engine => params[:engine], :gateway => params[:gateway], :for_user => current_user.id}).enabled_by(current_user.owner.id).query
