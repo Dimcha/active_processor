@@ -62,6 +62,8 @@ module ActiveProcessor #:nodoc:
       #   result << "<input id=\"#{field}\" name=\"#{field}\" type=\"hidden\" value=\"#{value}\" />\n"
       # end
 
+      result << "\n"
+      result << submit_tag(_('Confirm'), :disable_with => _('Processing..'))
       result << '</form>'
       result= result.join("\n")
 
