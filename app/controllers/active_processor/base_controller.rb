@@ -77,7 +77,14 @@ module ActiveProcessor
 
     def notice_flash_errors(object)
       object.errors.each { |key, value|
-        flash.now[:notice] += "<br> * #{_(key)} - #{value.class == Array ? _(value.first) : _(value)}"
+        if key.to_s[0..7] == "gateway_"
+          key_string = key.to_s
+        else
+          key_string = "gateway_" + key.to_s
+          key_string = "gateway_time" if key_string == "gateway_year"
+        end
+
+        flash.now[:notice] += "<br> [*] #{_(key_string)} - #{value.class == Array ? _(value.first) : _(value)}"
       } if object.respond_to?(:errors)
     end
 
