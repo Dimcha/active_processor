@@ -227,7 +227,7 @@ module ActiveProcessor
 
       def set_error_messages(transaction, payment)
         case transaction.status
-          when :canceled then
+          when :cancelled then
             payment.update_attributes({:pending_reason => "Canceled", :shipped_at => Time.now})
             return _('Transaction_was_canceled')
           when :expired
