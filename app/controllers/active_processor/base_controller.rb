@@ -65,6 +65,8 @@ module ActiveProcessor
                 else
                   flash.now[:notice] += "<br/> * ".html_safe + @gateway.payment.response.params["error_message"].to_s
                 end
+              elsif @gateway.name == "paypal"
+                flash.now[:notice] += "<br/> * ".html_safe + @gateway.payment.response.message.to_s
               end
             end
             notice_flash_errors(@gateway.credit_card) if @gateway.credit_card.errors.size > 0
@@ -115,16 +117,16 @@ module ActiveProcessor
 
     def check_if_enabled
       if admin?
-        last_payment = Payment.where("paymenttype NOT IN ('manual', 'credit note', 'invoice', 'voucher', 'subscription', 'Card')").last 
-        if (last_payment and (last_payment.date_added > (Time.now - 1.day))) 
+        last_payment = Payment.where("paymenttype NOT IN ('manual', 'credit note', 'invoice', 'voucher', 'subscription', 'Card')").last
+        if (last_payment and (last_payment.date_added > (Time.now - 1.day)))
           flash[:notice] = _('payment_gateway_restriction_for_second_time')
-          redirect_to :root and return false 
-        end 
-      else 
-        flash[:notice] = _('Dont_be_so_smart') 
+          redirect_to :root and return false
+        end
+      else
+        flash[:notice] = _('Dont_be_so_smart')
         redirect_to :root
       end
-    end 
+    end
 
   end
 end
