@@ -34,7 +34,8 @@ class ActiveProcessor::IdealController < ActiveProcessor::BaseController
 
 
     params['gateways']["issuer_id"] = params[:purchase][:issuer_id] if params[:purchase] and params[:purchase][:issuer_id]
-    if params[:purchase] and params[:purchase][:issuer_id] and @engine.pay_with(@gateway, request.remote_ip, params['gateways'])
+    error_notice = ''
+    if params[:purchase] and params[:purchase][:issuer_id] and @engine.pay_with(@gateway, request.remote_ip, error_notice, params['gateways'])
       flash[:notice] = nil
       redirect_to @gateway.redirect_url and return false
     else

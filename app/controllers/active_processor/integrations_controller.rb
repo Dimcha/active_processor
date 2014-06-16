@@ -12,7 +12,8 @@ class ActiveProcessor::IntegrationsController < ActiveProcessor::BaseController
     @engine = ::GatewayEngine.find(:first, {:engine => params[:engine], :gateway => params[:gateway], :for_user => current_user.id}).enabled_by(current_user.owner.id)
     @gateway = @engine.query
 
-    if @engine.pay_with(@gateway, request.remote_ip, params['gateways'])
+    error_notice = ''
+    if @engine.pay_with(@gateway, request.remote_ip, error_notice, params['gateways'])
       respond_to do |format|
         format.html {}
       end

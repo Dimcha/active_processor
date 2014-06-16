@@ -153,19 +153,32 @@ module ActiveProcessor
 
         @params.each { |engine, gateways|
           gateways.each { |gateway, settings|
-            ActiveProcessor.log("updating gateway: #{gateway} #{scope}")
-            settings.each { |name, value|
-                #ActiveProcessor.log("zzzzz#{name}:#{value.class}")
-                #if value.class.to_s == 'ActionDispatch::Http::UploadedFile'
-               # ActiveProcessor.log("eeee:#{value.read}")
-               # ActiveProcessor.log("eeee:#{value.tempfile}")
-              #end
-              @gateways[engine][gateway].set(scope, {name => (value.class == ActionDispatch::Http::UploadedFile and name != 'logo_image') ? StringIO.new(value.tempfile.read) : value})
-              errors += @gateways[engine][gateway].errors.size
-            }
-            if @gateways[engine][gateway].respond_to?(:valid_settings?)
-              @gateways[engine][gateway].valid_settings?
-              errors += @gateways[engine][gateway].errors.size
+
+            # Saves only enabled engine details
+            if settings[:enabled].to_i == 1
+              ActiveProcessor.log("updating gateway: #{gateway} #{scope}")
+              settings.each { |name, value|
+                  #ActiveProcessor.log("zzzzz#{name}:#{value.class}")
+                  #if value.class.to_s == 'ActionDispatch::Http::UploadedFile'
+                 # ActiveProcessor.log("eeee:#{value.read}")
+                 # ActiveProcessor.log("eeee:#{value.tempfile}")
+                #end
+                @gateways[engine][gateway].set(scope, {name => (value.class == ActionDispatch::Http::UploadedFile and name != 'logo_image') ? StringIO.new(value.tempfile.read) : value})
+                errors += @gateways[engine][gateway].errors.size
+              }
+              if @gateways[engine][gateway].respond_to?(:valid_settings?)
+                @gateways[engine][gateway].valid_settings?
+                errors += @gateways[engine][gateway].errors.size
+              end
+              if gateway.to_s == 'hsbc_secure_epayments'
+                if @gateways[engine][gateway].respond_to?(:valid_hsbc?)
+                  @gateways[engine][gateway].valid_hsbc?
+                  errors += @gateways[engine][gateway].errors.size
+                end
+              end
+            elsif settings[:enabled].to_i == 0 || @gateways[engine][gateway].get(:config, :enabled).to_i == 1
+              # When disabling Settings Are not udpated
+              @gateways[engine][gateway].set(scope, {:enabled => settings[:enabled]})
             end
           }
         }
@@ -176,7 +189,7 @@ module ActiveProcessor
       end
 
       # Pay using these parameters
-      def pay_with(gateway, ip, params = {})
+      def pay_with(gateway, ip, error_notice, params = {})
         @params = params # for callbacks
         run(["on", "before", "payment", "validation"], ["on", "before", @engine, "payment", "validation"])
         ActiveProcessor.log("validating gateway: #{gateway.name} #{gateway.engine}")
@@ -184,7 +197,7 @@ module ActiveProcessor
           ActiveProcessor.log("validated successfully: #{gateway.name} #{gateway.engine}")
           run(["on", "after", "payment", "validation"], ["on", "after", @engine, "payment", "validation"])
           ActiveProcessor.log("paying with gateway: #{gateway.name} #{gateway.engine}")
-          if gateway.pay(@user, ip, params)
+          if gateway.pay(@user, ip, error_notice, params)
             ActiveProcessor.log("successfully payed with: #{gateway.name} #{gateway.engine}")
             run(["on", "after", "successful", "payment"], ["on", "after", @engine, "successful", "payment"])
             return true

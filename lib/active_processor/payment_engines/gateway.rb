@@ -3,6 +3,7 @@ module ActiveProcessor
   module PaymentEngines
     class Gateway < PaymentEngine
       extend Forwardable
+      require 'uri'
 
       def_delegators :instance, :display_name, :supported_cardtypes
 
@@ -20,7 +21,7 @@ module ActiveProcessor
         super(engine, name, options, fields)
       end
 
-      def pay(user, ip, params)
+      def pay(user, ip, error_notice, params)
         if self.get(:config, "tax_in_amount").to_s == "excluded"
           gross = exchange(params[@engine][@name]['amount'], params[@engine][@name]['currency'], params[@engine][@name]['default_currency'])
           money = ActiveProcessor.configuration.substract_tax.call(user, money)
@@ -61,23 +62,60 @@ module ActiveProcessor
 
         ActiveProcessor.log("paying with gateway: #{@name} from #{@payment.ip}. Original amount: #{@payment.orig_amount} #{@payment.currency} (with tax: #{@payment.orig_with_tax}), converted amount in cents #{@payment.money} (tax: #{@payment.tax}) #{params[@engine][@name]['default_currency']}")
 
-        begin
-          if @name == 'authorize_net'
-            @payment.response = gw.purchase(@payment.amount, @credit_card, {:ip => @payment.ip}.merge!(@payment.authorize).merge!(params))
-          else
-            @payment.response = gw.authorize(@payment.amount, @credit_card, {:ip => @payment.ip}.merge!(@payment.authorize))
-          end
-          if @payment.response.success?
-            ActiveProcessor.log("successfully payed amount: #{@payment.orig_amount} #{@payment.currency} (authorization: #{@payment.response.authorization})")
-            gw.capture(@payment.amount, @payment.response.authorization)
-            return true
-          else
-            ActiveProcessor.log("failed to pay amount: #{@payment.money} #{@payment.currency}")
+        error_notice.replace(valid_gateway(gw))
+        if error_notice.blank?
+          begin
+            if @name == 'authorize_net'
+              @payment.response = gw.purchase(@payment.amount, @credit_card, {:ip => @payment.ip}.merge!(@payment.authorize).merge!(params))
+            else
+              @payment.response = gw.authorize(@payment.amount, @credit_card, {:ip => @payment.ip}.merge!(@payment.authorize))
+            end
+            if @payment.response.success?
+              ActiveProcessor.log("successfully payed amount: #{@payment.orig_amount} #{@payment.currency} (authorization: #{@payment.response.authorization})")
+              gw.capture(@payment.amount, @payment.response.authorization)
+              return true
+            else
+              ActiveProcessor.log("failed to pay amount: #{@payment.money} #{@payment.currency}")
+              return false
+            end
+          rescue ActiveMerchant::ConnectionError, ActiveMerchant::Billing::Error
+            return false
+          rescue SocketError => e
+            error_notice.replace(_("gateway_error_invalid_uri"))
             return false
           end
-        rescue SocketError, ActiveMerchant::ConnectionError, ActiveMerchant::Billing::Error
-          return false
         end
+      end
+
+      def valid_gateway(gateway)
+        error_notice = ''
+        if @name == 'hsbc_secure_epayments'
+          error_notice.replace(_("gateway_error_invalid_uri")) unless valid_uri(gateway.options[:xml_url])
+          error_notice.replace(_("gateway_error_blank_uri")) if gateway.options[:xml_url].blank?
+        end
+        error_notice
+      end
+
+      def valid_uri(uri)
+        valid = true
+        if !uri.blank?
+          begin
+            new_uri = URI.parse(uri.to_s)
+            unless new_uri.kind_of?(URI::HTTP) || new_uri.kind_of?(URI::HTTPS)
+              valid = false
+            end
+          rescue URI::InvalidURIError
+            valid = false
+          end
+        end
+        valid
+      end
+
+      def valid_hsbc?
+        uri = get(:config, 'xml_url').to_s
+
+        @errors.store('xml_url', "gateway_error_invalid_uri") if !valid_uri(uri)
+        @errors.store('xml_url', "gateway_error_blank_uri") if uri.blank?
       end
 
       def valid_settings?

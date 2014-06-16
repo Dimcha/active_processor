@@ -28,7 +28,6 @@ module ActiveProcessor
         end
       end
 
-
       def valid?(params)
         for param, value in params[@engine][@name]
           set(:form, {param => value}) # field validations
@@ -49,7 +48,7 @@ module ActiveProcessor
         return (@errors.size > 0) ? false : true
       end
 
-      def pay(user, ip, params)
+      def pay(user, ip, error_notice, params)
         if self.get(:config, "tax_in_amount").to_s == "excluded"
           gross = exchange(params[@engine][@name]['amount'], params[@engine][@name]['currency'], @settings['default_currency']).to_f
           money = ActiveProcessor.configuration.substract_tax.call(user, gross).to_f

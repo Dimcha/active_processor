@@ -87,7 +87,7 @@ module ActiveProcessor
       end
 
       # call payment save when pay.
-      def pay(user, ip, params)
+      def pay(user, ip, error_notice, params)
         transaction = params[:transaction]
         ActiveProcessor.debug("Paying OSMP")
         ActiveProcessor.debug("Transaction: #{transaction.to_yaml}")

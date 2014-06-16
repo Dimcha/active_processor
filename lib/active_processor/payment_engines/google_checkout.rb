@@ -46,7 +46,7 @@ module ActiveProcessor
         return (@errors.size > 0) ? false : true
       end
 
-      def pay(user, ip, params)
+      def pay(user, ip, error_notice, params)
         payment_default_currency = get(:config, 'default_geteway_currency').to_s
         original_currency = params[@engine][@name]['currency'].to_s
         original_amount = params[@engine][@name]['amount'].to_f

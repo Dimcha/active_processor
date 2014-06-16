@@ -68,7 +68,8 @@ class ActiveProcessor::OsmpController < ActiveProcessor::BaseController
             if payment
               render :xml => @gateway.error_response(params[:txn_id]) and return false
             else
-              @engine.pay_with(@gateway, request.remote_ip, params.merge(:transaction => transaction))
+              error_notice = ''
+              @engine.pay_with(@gateway, request.remote_ip, error_notice, params.merge(:transaction => transaction))
               payment = Payment.find(:first, :conditions => ["date_added = ? AND paymenttype = ? AND transaction_id = ?", transaction[:date], [params[:engine], params[:gateway]].join("_"), transaction[:id]])
               if payment
                 render :xml => @gateway.payment_status(payment) and return false
@@ -112,16 +113,16 @@ class ActiveProcessor::OsmpController < ActiveProcessor::BaseController
     }
   end
 
-  def limited 
-    last_payment = Payment.where("paymenttype NOT IN ('manual', 'credit note', 'invoice', 'voucher', 'subscription', 'Card')").last 
-    if (not payment_gateway_active?) and last_payment and (last_payment.date_added > (Time.now - 1.day)) 
-      xml = Builder::XmlMarkup.new 
-      xml.instruct!(:xml, :version => "1.0") 
-      render :xml => xml.response { 
-          xml.error = _('payment_gateway_restriction_for_second_time') 
-      } 
-      return true 
-    end 
-    return false 
+  def limited
+    last_payment = Payment.where("paymenttype NOT IN ('manual', 'credit note', 'invoice', 'voucher', 'subscription', 'Card')").last
+    if (not payment_gateway_active?) and last_payment and (last_payment.date_added > (Time.now - 1.day))
+      xml = Builder::XmlMarkup.new
+      xml.instruct!(:xml, :version => "1.0")
+      render :xml => xml.response {
+          xml.error = _('payment_gateway_restriction_for_second_time')
+      }
+      return true
+    end
+    return false
   end
 end

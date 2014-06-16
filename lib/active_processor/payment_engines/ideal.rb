@@ -94,7 +94,7 @@ module ActiveProcessor
         return (@errors.size > 0) ? false : true
       end
 
-      def pay(user, ip, params)
+      def pay(user, ip, error_notice, params)
         if self.get(:config, "tax_in_amount").to_s == "excluded"
           gross = params[@engine][@name]['amount'].to_f
           money = round_to_cents(ActiveProcessor.configuration.substract_tax.call(user, gross)).to_f

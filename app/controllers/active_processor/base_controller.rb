@@ -34,8 +34,10 @@ module ActiveProcessor
 #      @page_title = @engine.display_name
 #      @page_icon = "money.png"
 
+      # Custom Notice passed to get response in case of crashing
       respond_to do |format|
-        if @engine.pay_with(@engine.query, request.remote_ip, params['gateways'])
+        error_notice = ''
+        if @engine.pay_with(@engine.query, request.remote_ip, error_notice, params['gateways'])
 
           format.html {
             flash[:status] = _('Payment_Successful')
@@ -60,11 +62,14 @@ module ActiveProcessor
             else
               flash.now[:notice] = _('Payment_Error')
               if @gateway.name == "hsbc_secure_epayments"
-                if @gateway.payment.response.params["return_message"]
-                  flash.now[:notice] += "<br/> * ".html_safe + @gateway.payment.response.params["return_message"].to_s
-                else
-                  flash.now[:notice] += "<br/> * ".html_safe + @gateway.payment.response.params["error_message"].to_s
+                if  !@gateway.payment.response.blank?
+                  if @gateway.payment.response.params["return_message"]
+                    flash.now[:notice] += "<br/> * ".html_safe + @gateway.payment.response.params["return_message"].to_s
+                  else
+                    flash.now[:notice] += "<br/> * ".html_safe + @gateway.payment.response.params["error_message"].to_s
+                  end
                 end
+                flash.now[:notice] += "<br/> * ".html_safe + error_notice if !error_notice.blank?
               elsif @gateway.name == "paypal"
                 flash.now[:notice] += "<br/> * ".html_safe + @gateway.payment.response.message.to_s
               end

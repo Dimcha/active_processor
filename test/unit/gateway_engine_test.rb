@@ -248,7 +248,8 @@ class GatewayEngineTest < Test::Unit::TestCase
       ActiveProcessor::PaymentEngines::Gateway.any_instance.expects(:valid?).returns(true)
       ActiveProcessor::PaymentEngines::Gateway.any_instance.expects(:pay).returns(true)
 
-      assert_equal true, @engine.pay_with(@engine.query({:engine => :gateways, :gateway => :bogus}), "127.0.0.1", {'gateways' => {'bogus' => {'login' => '1'}}})
+      error_notice = ''
+      assert_equal true, @engine.pay_with(@engine.query({:engine => :gateways, :gateway => :bogus}), "127.0.0.1", error_notice, {'gateways' => {'bogus' => {'login' => '1'}}})
     end
 
     should "not allow to pay if payment validation fails" do
@@ -256,7 +257,8 @@ class GatewayEngineTest < Test::Unit::TestCase
 
       ActiveProcessor::PaymentEngines::Gateway.any_instance.expects(:valid?).returns(false)
 
-      assert_equal false, @engine.pay_with(@engine.query({:engine => :gateways, :gateway => :bogus}), "127.0.0.1", {'gateways' => {'bogus' => {'login' => '1'}}})
+      error_notice = ''
+      assert_equal false, @engine.pay_with(@engine.query({:engine => :gateways, :gateway => :bogus}), "127.0.0.1", error_notice, {'gateways' => {'bogus' => {'login' => '1'}}})
     end
 
     should "not pay if payment action fails" do
@@ -265,7 +267,8 @@ class GatewayEngineTest < Test::Unit::TestCase
       ActiveProcessor::PaymentEngines::Gateway.any_instance.expects(:valid?).returns(true)
       ActiveProcessor::PaymentEngines::Gateway.any_instance.expects(:pay).returns(false)
 
-      assert_equal false, @engine.pay_with(@engine.query({:engine => :gateways, :gateway => :bogus}), "127.0.0.1", {'gateways' => {'bogus' => {'login' => '1'}}})
+      error_notice = ''
+      assert_equal false, @engine.pay_with(@engine.query({:engine => :gateways, :gateway => :bogus}), "127.0.0.1", error_notice, {'gateways' => {'bogus' => {'login' => '1'}}})
     end
 
     context "with set engine" do
